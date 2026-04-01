@@ -1,5 +1,5 @@
-import { setupControls } from "./controls.js";
-import { renderCalendar } from "./render.js";
+import { setupControls } from "./calendar/controls.js";
+import { renderCalendar } from "./calendar/render.js";
 
 setupControls(() => {
   renderCalendar();
