@@ -44,7 +44,22 @@
     </form>
   </dialog>
 
+  <dialog class="modal" id="delete-confirm-modal">
+    <div class="modal__form">
+      <h2 class="modal__title">Delete Assignee</h2>
+      <p style="margin-bottom: 24px; font-size: 14px; color: var(--ink);">Are you sure you want to delete <strong id="delete-assignee-name"></strong>?</p>
+      <div class="modal__actions">
+        <button type="button" class="header__btn-secondary" id="btn-cancel-delete">Cancel</button>
+        <button type="button" class="header__btn-today" id="btn-confirm-delete" style="background: #e63946; color: white;">Delete</button>
+      </div>
+    </div>
+  </dialog>
+
+  <section id="assignee-list" class="assignees"></section>
+
   <div id="calendar-wrap" class="calendar"></div>
+  <script type="module" src="assignee/render.js"></script>
+
 </body>
 
 </html>

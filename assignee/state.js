@@ -13,3 +13,9 @@ export function addAssignee(name) {
   });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(assignees));
 }
+
+export function deleteAssignee(name) {
+  const assignees = getAssignees();
+  const updated = assignees.filter(a => a.name !== name);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+}

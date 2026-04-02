@@ -238,3 +238,50 @@ body {
 .header__btn-secondary:active {
   transform: scale(0.97);
 }
+
+/* ── Assignees ── */
+.assignees {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.assignee-chip {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.assignee-chip__delete {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-muted, #888);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 2px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  transition: all 0.2s;
+}
+
+.assignee-chip__delete:hover {
+  color: #e63946;
+  background: rgba(230, 57, 70, 0.1);
+}
