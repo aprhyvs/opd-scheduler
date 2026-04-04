@@ -2,6 +2,7 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { buildGrid } from "./utils.js";
 import { today, state } from "./state.js";
 import { MONTHS, DOWS, COL, CELL, ROW_H, PAD_X, HEADER_H, DOW_H, PAD_TOP, PAD_BOT, SVG_W } from "./config.js";
+import { getAssignees, assignToDate, moveAssigneeDate, removeFromDate } from "../assignee/state.js";
 
 export function renderCalendar() {
   const { year, month } = state;
@@ -127,14 +128,135 @@ export function renderCalendar() {
           .attr("stroke-width", 2);
       }
 
-      // Day number
+      // Day number - positioned top right
       g.append("text")
         .attr("class", "calendar__day-num")
-        .attr("x", cellW / 2)
-        .attr("y", cellH / 2)
+        .attr("x", cellW - 12)
+        .attr("y", 20)
         .attr("fill", numFill)
         .attr("font-weight", numWeight)
+        .attr("text-anchor", "end")
         .text(day);
+
+      // Date string for this cell matching schedule structure
+      const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      
+      // Render scheduled assignees natively using HTML inside foreignObject
+      const assigneesForDay = getAssignees().filter(a => a.schedule && a.schedule.includes(dateString));
+
+      if (assigneesForDay.length > 0) {
+        const fo = g.append("foreignObject")
+          .attr("x", 4)
+          .attr("y", 30) // Below the day number
+          .attr("width", cellW - 8)
+          .attr("height", cellH - 34)
+          .style("pointer-events", "auto"); // ensure inner contents catch pointers
+
+        const container = fo.append("xhtml:div")
+          .style("width", "100%")
+          .style("height", "100%")
+          .style("display", "flex")
+          .style("flex-direction", "column")
+          .style("gap", "4px")
+          .style("overflow-y", "auto")
+          .style("align-items", "center");
+
+        assigneesForDay.forEach(assignee => {
+          const chip = container.append("xhtml:div")
+            .style("background", "var(--surface)")
+            .style("border", "1px solid var(--border)")
+            .style("border-radius", "4px")
+            .style("padding", "2px 6px")
+            .style("font-size", "11px")
+            .style("color", "var(--ink)")
+            .style("display", "flex")
+            .style("justify-content", "space-between")
+            .style("align-items", "center")
+            .style("width", "100%")
+            .style("box-sizing", "border-box")
+            .style("box-shadow", "0 1px 2px rgba(0,0,0,0.05)")
+            .style("cursor", "move")
+            .attr("draggable", "true");
+
+          chip.on("dragstart", function(event) {
+            event.stopPropagation();
+            event.dataTransfer.setData("text/plain", JSON.stringify({ 
+              name: assignee.name, 
+              source: "calendar",
+              date: dateString 
+            }));
+            event.dataTransfer.dropEffect = "move";
+          });
+
+          // Text centered 
+          chip.append("xhtml:span")
+            .style("flex-grow", "1")
+            .style("text-align", "center")
+            .style("white-space", "nowrap")
+            .style("overflow", "hidden")
+            .style("text-overflow", "ellipsis")
+            .text(assignee.name);
+
+          // Delete button
+          const delBtn = chip.append("xhtml:button")
+            .style("background", "transparent")
+            .style("border", "none")
+            .style("color", "var(--ink-muted)")
+            .style("cursor", "pointer")
+            .style("font-size", "14px")
+            .style("line-height", "1")
+            .style("padding", "0 2px")
+            .html("&times;");
+
+          delBtn.on("click", function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            removeFromDate(assignee.name, dateString);
+            renderCalendar();
+          });
+          
+          delBtn.on("mouseenter", function() {
+            d3.select(this).style("color", "#e63946");
+          }).on("mouseleave", function() {
+            d3.select(this).style("color", "var(--ink-muted)");
+          });
+        });
+      }
+
+      // Allow dragging OVER calendar cell
+      g.on("dragover", function(event) {
+        event.preventDefault();
+        d3.select(this).select("rect.calendar__day-bg").attr("fill", "var(--accent-light)");
+      });
+
+      g.on("dragleave", function(event) {
+        if (!todayCell) d3.select(this).select("rect.calendar__day-bg").attr("fill", "transparent");
+        else d3.select(this).select("rect.calendar__day-bg").attr("fill", "var(--today-bg)");
+      });
+
+      g.on("drop", function(event) {
+        event.preventDefault();
+        
+        if (!todayCell) d3.select(this).select("rect.calendar__day-bg").attr("fill", "transparent");
+        else d3.select(this).select("rect.calendar__day-bg").attr("fill", "var(--today-bg)");
+
+        const data = event.dataTransfer.getData("text/plain");
+        if (data) {
+          try {
+            const payload = JSON.parse(data);
+            if (payload.name) {
+              if (payload.source === 'sidebar') {
+                assignToDate(payload.name, dateString);
+              } else if (payload.source === 'calendar' && payload.date !== dateString) {
+                moveAssigneeDate(payload.name, payload.date, dateString);
+              }
+              renderCalendar();
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        }
+      });
 
       // Hover highlight 
       g.on("mouseenter", function () {

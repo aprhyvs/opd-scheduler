@@ -1,4 +1,5 @@
-import { getAssignees, deleteAssignee } from "./state.js";
+import { getAssignees, deleteAssignee, removeFromDate } from "./state.js";
+import { renderCalendar } from "../calendar/render.js";
 
 let assigneeToDelete = null;
 
@@ -18,14 +19,36 @@ if (btnCancelDelete && btnConfirmDelete && deleteModal) {
     if (assigneeToDelete) {
       deleteAssignee(assigneeToDelete);
       renderAssignees();
+      renderCalendar(); // Also re-render calendar in case they were removed from schedule
       deleteModal.close();
       assigneeToDelete = null;
     }
   });
 }
 
+const container = document.getElementById("assignee-list");
+
+if (container) {
+  container.addEventListener("dragover", (e) => {
+    e.preventDefault();
+  });
+
+  container.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const data = e.dataTransfer.getData("text/plain");
+    if (data) {
+      try {
+        const payload = JSON.parse(data);
+        if (payload.name && payload.source === 'calendar') {
+          removeFromDate(payload.name, payload.date);
+          renderCalendar();
+        }
+      } catch (err) { }
+    }
+  });
+}
+
 export function renderAssignees() {
-  const container = document.getElementById("assignee-list");
   if (!container) return;
 
   const assignees = getAssignees();
@@ -34,6 +57,12 @@ export function renderAssignees() {
   assignees.forEach(({ name }) => {
     const chip = document.createElement("div");
     chip.className = "assignee-chip";
+    chip.draggable = true;
+
+    chip.addEventListener("dragstart", (e) => {
+      e.dataTransfer.setData("text/plain", JSON.stringify({ name, source: "sidebar" }));
+      e.dataTransfer.dropEffect = "copy";
+    });
 
     const nameSpan = document.createElement("span");
     nameSpan.textContent = name;
