@@ -11,20 +11,27 @@ body {
   font-family: 'DM Sans', sans-serif;
   color: var(--ink);
   min-height: 100vh;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 40px;
+  align-items: start;
+  padding: 40px;
+}
+
+/* ── Main Content ── */
+.main-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 40px 20px 60px;
+  width: 100%;
 }
 
 /* ── Header ── */
 .header {
   width: 100%;
-  max-width: 760px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 32px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
 }
 
 .header__title {
@@ -42,12 +49,15 @@ body {
 /* ── Selector ── */
 .header__controls {
   display: flex;
-  gap: 10px;
-  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+  width: 100%;
 }
 
 .header__select-wrap {
   position: relative;
+  width: 100%;
 }
 
 .header__select-wrap::after {
@@ -77,6 +87,7 @@ body {
   cursor: pointer;
   transition: border-color 0.15s, box-shadow 0.15s;
   outline: none;
+  width: 100%;
 }
 
 .header__select:focus {
@@ -108,7 +119,6 @@ body {
 /* ── Calendar card ── */
 .calendar {
   width: 100%;
-  max-width: 760px;
   background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -242,7 +252,6 @@ body {
 /* ── Assignees ── */
 .assignees {
   width: 100%;
-  max-width: 760px;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
