@@ -31,10 +31,4 @@ export function setupControls(onStateChange) {
     onStateChange(); 
   });
 
-  document.getElementById("btn-today").addEventListener("click", () => {
-    setState({ year: today.getFullYear(), month: today.getMonth() });
-    monthSelect.value = state.month;
-    yearSelect.value  = state.year;
-    onStateChange();
-  });
 }

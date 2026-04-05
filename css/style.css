@@ -13,9 +13,9 @@ body {
   min-height: 100vh;
   display: grid;
   grid-template-columns: 220px 1fr;
-  gap: 40px;
   align-items: start;
-  padding: 40px;
+  gap: 32px;
+  padding: 32px;
 }
 
 /* ── Main Content ── */
@@ -24,8 +24,6 @@ body {
   flex-direction: column;
   width: 100%;
 }
-
-
 
 /* ── Assignees ── */
 .assignees {
@@ -48,7 +46,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .assignee-chip__delete {
