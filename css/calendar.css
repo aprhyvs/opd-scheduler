@@ -1,0 +1,53 @@
+/* ── Calendar card ── */
+.calendar {
+  width: 100%;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* ── D3 SVG styles ── */
+.calendar__month-label {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  fill: var(--header-fg);
+  dominant-baseline: middle;
+}
+
+.calendar__year-label {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  fill: rgba(247, 244, 239, 0.55);
+  dominant-baseline: middle;
+}
+
+.calendar__dow {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: var(--ink-muted);
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.calendar__day-cell rect {
+  rx: 8;
+  ry: 8;
+}
+
+.calendar__day-num {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.calendar__day-cell:hover rect.calendar__day-bg {
+  filter: brightness(0.94);
+  cursor: pointer;
+}
