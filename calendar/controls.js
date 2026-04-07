@@ -1,10 +1,9 @@
 import { MONTHS } from "./config.js";
 import { state, setState } from "./state.js";
-import { today } from "./state.js";
 
 export function setupControls(onStateChange) {
   const monthSelect = document.getElementById("month-select");
-  const yearSelect  = document.getElementById("year-select");
+  const yearSelect = document.getElementById("year-select");
 
   MONTHS.forEach((month, index) => {
     const option = document.createElement("option");
@@ -21,14 +20,14 @@ export function setupControls(onStateChange) {
     yearSelect.appendChild(option);
   }
 
-  monthSelect.addEventListener("change", () => { 
-    setState({ month: +monthSelect.value }); 
-    onStateChange(); 
+  monthSelect.addEventListener("change", () => {
+    setState({ month: +monthSelect.value });
+    onStateChange();
   });
-  
-  yearSelect.addEventListener("change", () => { 
-    setState({ year: +yearSelect.value });  
-    onStateChange(); 
+
+  yearSelect.addEventListener("change", () => {
+    setState({ year: +yearSelect.value });
+    onStateChange();
   });
 
 }

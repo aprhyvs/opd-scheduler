@@ -1,36 +1,30 @@
 import { buildGrid } from "./utils.js";
-import { today, state } from "./state.js";
+import { state } from "./state.js";
 import { MONTHS, DOWS } from "./config.js";
 import { getAssignees, assignToDate, moveAssigneeDate } from "../assignee/state.js";
 
-export function renderCalendar() {
-  const { year, month } = state;
-  const cells = buildGrid(year, month);
-  const rows = cells.length / 7;
-
-  const wrap = document.getElementById("calendar-wrap");
-  wrap.innerHTML = ""; // Clear existing
-
-  // 1. Header
+function buildHeader(year, month) {
   const header = document.createElement("div");
   header.className = "calendar__header";
-  
+
   const monthLabel = document.createElement("div");
   monthLabel.className = "calendar__month-label";
   monthLabel.textContent = MONTHS[month];
-  
+
   const yearLabel = document.createElement("div");
   yearLabel.className = "calendar__year-label";
   yearLabel.textContent = year;
-  
+
   header.appendChild(monthLabel);
   header.appendChild(yearLabel);
-  wrap.appendChild(header);
 
-  // 2. Days of week row
+  return header;
+}
+
+function buildDowRow() {
   const dowsContainer = document.createElement("div");
   dowsContainer.className = "calendar__dows";
-  
+
   DOWS.forEach((d, i) => {
     const isWeekend = (i === 0 || i === 6);
     const dow = document.createElement("div");
@@ -38,18 +32,17 @@ export function renderCalendar() {
     dow.textContent = d;
     dowsContainer.appendChild(dow);
   });
-  wrap.appendChild(dowsContainer);
 
-  // 3. Grid container
+  return dowsContainer;
+}
+
+function buildGridDOM(year, month, onDrop) {
+  const cells = buildGrid(year, month);
+  const rows = cells.length / 7;
+
   const grid = document.createElement("div");
   grid.className = "calendar__grid";
   grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-
-  const isToday = (d) =>
-    d !== null &&
-    year === today.getFullYear() &&
-    month === today.getMonth() &&
-    d === today.getDate();
 
   const isWeekendCell = (idx) => idx % 7 === 0 || idx % 7 === 6;
 
@@ -64,7 +57,7 @@ export function renderCalendar() {
       grid.appendChild(cellEl);
       return; // Skip filling empty cells
     }
-    
+
     if (weekendCell) {
       cellEl.classList.add("calendar__day-cell--weekend");
     }
@@ -128,7 +121,7 @@ export function renderCalendar() {
             } else if (payload.source === 'calendar' && payload.date !== dateString) {
               moveAssigneeDate(payload.name, payload.date, dateString);
             }
-            renderCalendar();
+            onDrop();
           }
         } catch (err) {
           console.error(err);
@@ -139,5 +132,15 @@ export function renderCalendar() {
     grid.appendChild(cellEl);
   });
 
-  wrap.appendChild(grid);
+  return grid;
+}
+
+export function renderCalendar() {
+  const { year, month } = state;
+  const wrap = document.getElementById("calendar-wrap");
+  wrap.replaceChildren(); // Clear existing
+
+  wrap.appendChild(buildHeader(year, month));
+  wrap.appendChild(buildDowRow());
+  wrap.appendChild(buildGridDOM(year, month, renderCalendar));
 }
