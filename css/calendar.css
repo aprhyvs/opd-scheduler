@@ -63,14 +63,13 @@
   /* grid-template-rows updated via JS based on row count */
   flex-grow: 1;
   padding: 12px 16px;
-  gap: 8px;
+  gap: 16px;
   overflow: hidden;
 }
 
 .calendar__day-cell {
   background: transparent;
   border-radius: 8px;
-  padding: 8px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -90,15 +89,16 @@
 
 .calendar__day-num {
   font-family: 'DM Sans', sans-serif;
-  font-weight: 400;
-  font-size: 12px;
-  text-align: right;
-  color: var(--ink);
+  font-weight: 300;
+  font-size: 32px;
+  color: var(--accent);
+  opacity: 0.6;
   pointer-events: none;
   position: absolute;
-  top: 4px;
-  right: 6px;
-  z-index: 10;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
 }
 
 .calendar__day-num--weekend {
@@ -109,7 +109,7 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: flex-start;
   overflow-y: auto;
 }
 
@@ -123,14 +123,19 @@
 }
 
 .calendar__assignee-chip {
-  background: var(--surface);
   border-radius: 4px;
   padding: 0 6px;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 500;
   color: var(--ink);
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: move;
+  z-index: 1;
+}
+
+.calendar__assignee-chip:first-child {
+  margin-bottom: auto;
 }
